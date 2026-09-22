@@ -1,6 +1,6 @@
 extends Node2D
 
-var try = global.try
+var floor = global.try
 var touch = global.touch
 
 var sound_click = preload("res://audio/buttonpress.mp3")
@@ -38,33 +38,6 @@ func play_sound(sound, vol = 0.0):
 	
 func init_game():
 	init_lights()
-	init_collect()
-
-func init_collect():
-	
-	$garage/garage/mob.visible = 0
-	$map/collectables/part1_tire.visible = 1
-	$map/collectables/part3_tire.visible = 1
-	$map/collectables/part4_tire.visible = 1
-	$map/collectables/part1_battery.visible = 1
-	$map/collectables2/part3_keys.visible = 0
-	$map/collectables2/part2_keys.visible = 0
-	
-	
-	$garage/elevator_items/tire1.visible = 0
-	$garage/elevator_items/tire2.visible = 0
-	$garage/elevator_items/tire3.visible = 0
-	$garage/elevator_items/tire4.visible = 0
-	$garage/elevator_items/keys.visible = 0
-	$garage/elevator_items/battery.visible = 0
-	
-	$map/elevator_items/tire1.visible = 0
-	$map/elevator_items/tire2.visible = 0
-	$map/elevator_items/tire3.visible = 0
-	$map/elevator_items/tire4.visible = 0
-	$map/elevator_items/keys.visible = 0
-	$map/elevator_items/battery.visible = 0
-	
 
 func init_lights():
 	
@@ -110,9 +83,10 @@ func guide3(msg):
 
 
 func _ready() -> void:
+	match_floor()
+	anomaly_apply()
 	$CanvasLayer/mobile.visible = touch
 	translation()
-
 	
 	$sfx/bg.volume_db = -25
 	var tween2 = create_tween()
@@ -121,6 +95,9 @@ func _ready() -> void:
 	tween.tween_property($".", "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.0)
 	$map/part2/him_spawn_col/CollisionShape2D.set_deferred("disabled", 0)
 	init_game()
+	
+	
+	
 
 
 var elevator_area = 0
@@ -374,9 +351,7 @@ func _on_garage_pressed() -> void:
 		dead = 1
 		$CanvasLayer/elevator/garage.visible = 0
 		guide("")
-		#print("goon")
 		play_sound(sound_elevator)
-		#print($amp/hallway/elevator/close1.size.x)
 		global.try += 1
 		var tween = create_tween()
 		tween.set_parallel(1)
@@ -540,24 +515,7 @@ func _on_note_big_body_exited(body: Node2D) -> void:
 		note_area = 0
 		guide2("")
 		
-func _on_part_1_battery_area_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	if check_click(event):
-		print("battery taken")
-		play_sound(sound_collect)
-		car_battery_taken = 1
-		$map/collectables/part1_battery.visible = 0
-		$map/elevator_items/battery.visible = 1
-		$garage/elevator_items/battery.visible = 1
-		
 
-func _on_key_area_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	if check_click(event):
-		print("keys taken")
-		$map/collectables2/part3_keys.visible = 0
-		$map/collectables2/part2_keys.visible = 0	
-		$map/elevator_items/keys.visible = 1
-		$garage/elevator_items/keys.visible = 1
-		car_keys_taken = 1
 
 var equipped_tires = 0
 var garage_elevator_area = 0
@@ -575,26 +533,7 @@ func _on_garage_elevator_area_body_exited(body: Node2D) -> void:
 var back_tires_area = 0
 var front_tires_area = 0
 
-func _on_back_tires_area_body_entered(body: Node2D) -> void:
-	if body == $player: 
-		back_tires_area = 1
-		guide("to put tires")
 
-func _on_back_tires_area_body_exited(body: Node2D) -> void:
-	if body == $player: 
-		back_tires_area = 0
-		guide("")
-
-func _on_front_tires_area_body_entered(body: Node2D) -> void:
-	if body == $player: 
-		front_tires_area = 1
-		guide("to put tires")
-		
-func _on_front_tires_area_body_exited(body: Node2D) -> void:
-	if body == $player: 
-		front_tires_area = 0
-		guide("")
-		
 
 var car_ride_area = 0
 func _on_car_ride_body_entered(body: Node2D) -> void:
@@ -610,60 +549,12 @@ func _on_car_ride_body_exited(body: Node2D) -> void:
 var can_escape = 0
 var sofa_blood_discovered = 0
 var sofa_blood_area = 0
-func _on_sofa_blood_area_body_entered(body: Node2D) -> void:
-	if body == $player: 
-		if $map/part2/sofa/blood.visible:
-			sofa_blood_area = 1
-			print("blood to be cleaned")
-			subtitles("I should clean this blood", )
-			if !sofa_blood_discovered:
-				play_sound(sound_blood)
-				sofa_blood_discovered = 1
-				print("There's a mob in the garage")
-				$garage/garage/mob.visible = 1
-		elif him_spawn_ready && !spawned:
-			spawned = 1
-			#disable_move()
-			print("spawwned")
-			subtitles("!!!", )
-			can_escape = 1
-			if !can_kill && !first_spawn:
-				$map/collectables/part1_battery.visible = 1
-				#$map/collectables2/part3_keys.visible = 1
-				$map/collectables/part4_tire.visible = 1
-				$map/collectables/part3_tire.visible = 1
-				$map/collectables/part1_tire.visible = 1
-			elif can_kill:
-				$map/collectables2/part1_crawbar.visible = 1
-			$map/part2/him_spawn_col/CollisionShape2D.set_deferred("disabled", 1)
-			first_spawn = 1
-			play_sound(sound_spawn)
-			await get_tree().create_timer(1.0).timeout
-			
-var first_spawn = 0
-var him_spawn_ready = 0
+
+
 var mob_taken = 0
 func _on_sofa_blood_area_body_exited(body: Node2D) -> void:
 	if body == $player: 
 		sofa_blood_area = 0
-func _on_mob_area_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	if check_click(event):
-		print('mob taken')
-		$garage/garage/mob.visible = 0
-		mob_taken = 1
-		$map/part2/sofa/blood.visible = 0
-		him_spawn_ready = 1
-		
-var car_battery_area = 0
-
-func _on_car_battery_area_body_entered(body: Node2D) -> void:
-	if body == $player:
-		car_battery_area = 1
-		guide("to put the battery")
-func _on_car_battery_area_body_exited(body: Node2D) -> void:
-	if body == $player:
-		car_battery_area = 0
-		guide("")
 
 
 func _on_wardrobe_area_body_entered(body: Node2D) -> void:
@@ -750,6 +641,116 @@ func _on_touch_check_toggled(toggled_on: bool) -> void:
 	touch = toggled_on
 	$CanvasLayer/mobile.visible = toggled_on
 
-func match_try():
-	match try:
-		0: 
+var anomalies_dif1 = [
+	{"id"= 0, "show"= null ,"hide"= ^"map/part2/tv/tv", "dif" = 1},
+	{"id"= 1, "show"= null ,"hide"= ^"map/part2/sofa", "dif" = 1},
+	{"id"= 2, "show"= null ,"hide"= ^"map/part1/shelf4", "dif" = 1},
+	{"id"= 3, "show"= null ,"hide"= ^"map/part1/shelf3", "dif" = 1},
+	{"id"= 4, "show"= null ,"hide"= ^"map/part4/fridge", "dif" = 1},
+	{"id"= 5, "show"= null ,"hide"= ^"map/part4/sink", "dif" = 1},
+	{"id"= 6, "show"= null ,"hide"= ^"map/part4/sink", "dif" = 1},
+	{"id"= 7, "show"= null ,"hide"= ^"map/part3/pc", "dif" = 1},
+	{"id"= 8, "show"= null ,"hide"= ^"map/part3/wardrobe", "dif" = 1},
+	{"id"= 9, "show"= ^"map/part1/shelf5" ,"hide"= null, "dif" = 1},
+	
+]
+
+var anomalies_dif2 = [
+	{"id"= 10, "show"= null ,"hide"= ^"map/part3/chair", "dif" = 2},
+	{"id"= 11, "show"= null ,"hide"= ^"map/part4/box9", "dif" = 2},
+	{"id"= 12, "show"= null ,"hide"= ^"map/part1/pipe2", "dif" = 2},
+	{"id"= 13, "show"= null ,"hide"= ^"map/part2/plant2", "dif" = 2},
+	
+	{"id"= 14, "show"= ^"map/part1/pipe3" ,"hide"= null , "dif" = 2},
+	{"id"= 15, "show"= ^"map/part3/box8" ,"hide"= null , "dif" = 2},
+	{"id"= 16, "show"= ^"map/part4/box10" ,"hide"= null , "dif" = 2},
+	{"id"= 17, "show"= ^"map/part2/sofa/pillow3" ,"hide"= null , "dif" = 2},
+	
+]
+
+var anomalies_dif3 = [
+	{"id"= 18, "show"= null ,"hide"= ^"map/part1/bin", "dif" = 3},
+	{"id"= 19, "show"= null ,"hide"= ^"map/part2/sofa/pillow2", "dif" = 3},
+	{"id"= 20, "show"= null ,"hide"= ^"map/part3/clock/analogs", "dif" = 3},
+	{"id"= 21, "show"= null ,"hide"= ^"map/part4/sink/han", "dif" = 3},
+	{"id"= 22, "show"= ^"map/part1/bin2" ,"hide"= ^"map/part1/bin", "dif" = 3},
+	
+]
+
+
+var dif1_prob = 10
+var dif2_prob = 20
+
+
+func anomaly_apply():
+	#get_node_or_null(anomalies[0]["hide"]).visible = 0
+	var temp = randi_range(0,1)
+	if temp:
+		print("anomaly skipped")
+		return
+	else:
+		temp = randi_range(1, 30)
+		
+		
+		if temp <= dif1_prob:
+			var temp2 = randi_range(0, anomalies_dif1.size()-1)
+			temp = anomalies_dif1[temp2]
+		elif temp <= dif1_prob+dif2_prob:
+			var temp2 = randi_range(0, anomalies_dif2.size()-1)
+			temp = anomalies_dif2[temp2]
+		else:
+			var temp2 = randi_range(0, anomalies_dif3.size()-1)
+			temp = anomalies_dif3[temp2]
+		
+		if temp["show"] != null:
+			get_node_or_null(temp["show"]).visible = 1
+		if temp["hide"] != null:
+			get_node_or_null(temp["hide"]).visible = 0
+		print("anomaly happen")
+		print(temp)
+
+func match_floor():
+	match floor:
+		1: 
+			dif1_prob = 20
+			dif2_prob = 7
+		2: 
+			dif1_prob = 20
+			dif2_prob = 5
+		3: 
+			dif1_prob = 18
+			dif2_prob = 5
+		4: 
+			dif1_prob = 15
+			dif2_prob = 10
+		5: 
+			dif1_prob = 7
+			dif2_prob = 15
+		6: 
+			dif1_prob = 5
+			dif2_prob = 15
+		7: 
+			dif1_prob = 5
+			dif2_prob = 10
+		8: 
+			dif1_prob = 5
+			dif2_prob = 5
+		9: 
+			dif1_prob = 0
+			dif2_prob = 0
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
