@@ -623,12 +623,6 @@ height = 98.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lbhrr"]
 size = Vector2(270.57434, 197.22278)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_ir15t"]
-radius = 13.0
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_e1j6l"]
-size = Vector2(67, 20)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o8oq8"]
 bg_color = Color(0, 0.12156863, 0.10162377, 1)
 border_color = Color(0.22265625, 0.22265625, 0.22265625, 1)
@@ -1011,6 +1005,18 @@ rotation = -3.1415927
 layout_direction = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_66xif")
+
+[node name="floor" type="Label" parent="map/hallway/elevator" unique_id=401395555]
+offset_left = -47.0
+offset_top = -189.0
+offset_right = 91.0
+offset_bottom = 9.0
+theme_override_colors/font_color = Color(0.65882355, 0.65882355, 0.65882355, 0.4627451)
+theme_override_fonts/font = ExtResource("17_rysoc")
+theme_override_font_sizes/font_size = 126
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="boundaries" type="Node2D" parent="map/hallway" unique_id=373826329]
 position = Vector2(0, 31)
@@ -3802,54 +3808,6 @@ shape = SubResource("CapsuleShape2D_lbhrr")
 position = Vector2(286.3908, -143.69785)
 shape = SubResource("CapsuleShape2D_lbhrr")
 
-[node name="collectables2" type="Node2D" parent="map" unique_id=1797672999]
-
-[node name="part3_keys" type="Node2D" parent="map/collectables2" unique_id=1526022194]
-z_index = 1
-position = Vector2(97, 100)
-
-[node name="KeyPng1177" type="Sprite2D" parent="map/collectables2/part3_keys" unique_id=1693014616]
-position = Vector2(843, -33.999996)
-scale = Vector2(0.008189653, 0.008189654)
-texture = ExtResource("10_trtic")
-
-[node name="key_area" type="Area2D" parent="map/collectables2/part3_keys" unique_id=310123237]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/collectables2/part3_keys/key_area" unique_id=1101267296]
-position = Vector2(844, -36)
-shape = SubResource("CircleShape2D_ir15t")
-
-[node name="part2_keys" type="Node2D" parent="map/collectables2" unique_id=1840188224]
-z_index = 1
-position = Vector2(-1537, 100)
-
-[node name="KeyPng1177" type="Sprite2D" parent="map/collectables2/part2_keys" unique_id=1792923360]
-position = Vector2(843, -33.999996)
-scale = Vector2(0.008189653, 0.008189654)
-texture = ExtResource("10_trtic")
-
-[node name="key_area" type="Area2D" parent="map/collectables2/part2_keys" unique_id=1131587072]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/collectables2/part2_keys/key_area" unique_id=714175770]
-position = Vector2(844, -36)
-shape = SubResource("CircleShape2D_ir15t")
-
-[node name="part1_crawbar" type="Node2D" parent="map/collectables2" unique_id=1244436371]
-visible = false
-position = Vector2(181, -6)
-
-[node name="crowbad" type="Sprite2D" parent="map/collectables2/part1_crawbar" unique_id=1994820632]
-position = Vector2(-2783, -6)
-rotation = -1.5707964
-scale = Vector2(0.10700005, 0.13699993)
-texture = ExtResource("3_kvpfn")
-
-[node name="crowbar_area" type="Area2D" parent="map/collectables2/part1_crawbar" unique_id=966966244]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/collectables2/part1_crawbar/crowbar_area" unique_id=589979742]
-position = Vector2(-2782.5, -6)
-shape = SubResource("RectangleShape2D_e1j6l")
-
 [node name="garage" type="Node2D" parent="." unique_id=1635056332]
 position = Vector2(0, 2616)
 
@@ -4551,7 +4509,7 @@ blend_mode = 1
 texture = ExtResource("1_lbhrr")
 
 [node name="player" parent="." unique_id=312059141 instance=ExtResource("1_yqjtg")]
-position = Vector2(12, -52)
+position = Vector2(275, -52)
 
 [node name="crowbad" type="Sprite2D" parent="player" unique_id=1896290467]
 visible = false
@@ -4591,6 +4549,36 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_753oq")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_3x338")
 theme_override_styles/hover = SubResource("StyleBoxFlat_1yg85")
 text = "Garage"
+
+[node name="up" type="Button" parent="CanvasLayer/elevator" unique_id=1411231059]
+visible = false
+offset_left = 823.0
+offset_top = 333.0
+offset_right = 877.0
+offset_bottom = 419.0
+rotation = 1.5707964
+theme_override_colors/font_color = Color(0.67578125, 0.67578125, 0.67578125, 1)
+theme_override_fonts/font = ExtResource("17_rysoc")
+theme_override_font_sizes/font_size = 53
+theme_override_styles/normal = SubResource("StyleBoxFlat_753oq")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_3x338")
+theme_override_styles/hover = SubResource("StyleBoxFlat_1yg85")
+text = "<"
+
+[node name="down" type="Button" parent="CanvasLayer/elevator" unique_id=2111302969]
+visible = false
+offset_left = 737.0
+offset_top = 446.0
+offset_right = 791.0
+offset_bottom = 532.0
+rotation = 4.712389
+theme_override_colors/font_color = Color(0.67578125, 0.67578125, 0.67578125, 1)
+theme_override_fonts/font = ExtResource("17_rysoc")
+theme_override_font_sizes/font_size = 53
+theme_override_styles/normal = SubResource("StyleBoxFlat_753oq")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_3x338")
+theme_override_styles/hover = SubResource("StyleBoxFlat_1yg85")
+text = "<"
 
 [node name="apartment" type="Button" parent="CanvasLayer/elevator" unique_id=1620841190]
 visible = false
@@ -4862,9 +4850,6 @@ autoplay = true
 [connection signal="body_exited" from="map/part2/sofa/sofa_area" to="." method="_on_sofa_area_body_exited"]
 [connection signal="body_entered" from="map/part2/Area2D" to="." method="_on_area_part2_body_entered"]
 [connection signal="body_exited" from="map/part2/Area2D" to="." method="_on_area_part2_body_exited"]
-[connection signal="input_event" from="map/collectables2/part3_keys/key_area" to="." method="_on_key_area_input_event"]
-[connection signal="input_event" from="map/collectables2/part2_keys/key_area" to="." method="_on_key_area_input_event"]
-[connection signal="input_event" from="map/collectables2/part1_crawbar/crowbar_area" to="." method="_on_crowbar_area_input_event"]
 [connection signal="body_entered" from="garage/garage/car/front_tires/front_tires_area" to="." method="_on_front_tires_area_body_entered"]
 [connection signal="body_exited" from="garage/garage/car/front_tires/front_tires_area" to="." method="_on_front_tires_area_body_exited"]
 [connection signal="body_entered" from="garage/garage/car/back_tires/back_tires_area" to="." method="_on_back_tires_area_body_entered"]
@@ -4877,6 +4862,8 @@ autoplay = true
 [connection signal="body_exited" from="garage/garage/elevator_area" to="." method="_on_garage_elevator_area_body_exited"]
 [connection signal="input_event" from="garage/garage/mob/mob_area" to="." method="_on_mob_area_input_event"]
 [connection signal="pressed" from="CanvasLayer/elevator/garage" to="." method="_on_garage_pressed"]
+[connection signal="pressed" from="CanvasLayer/elevator/up" to="." method="_on_up_pressed"]
+[connection signal="pressed" from="CanvasLayer/elevator/down" to="." method="_on_down_pressed"]
 [connection signal="pressed" from="CanvasLayer/elevator/apartment" to="." method="_on_apartment_pressed"]
 [connection signal="pressed" from="CanvasLayer/pause/buttons/buttons/continue" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="CanvasLayer/pause/buttons/buttons/settings" to="." method="_on_settings_pressed"]

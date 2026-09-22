@@ -1,6 +1,6 @@
 extends Node2D
 
-var floor = global.try
+var floor = global.floor
 var touch = global.touch
 
 var sound_click = preload("res://audio/buttonpress.mp3")
@@ -83,8 +83,13 @@ func guide3(msg):
 
 
 func _ready() -> void:
+	$player.position = Vector2(0, -52)
+	
+	$map/hallway/elevator/floor.text = str(floor)
 	match_floor()
 	anomaly_apply()
+	print("floor ",floor)
+	
 	$CanvasLayer/mobile.visible = touch
 	translation()
 	
@@ -95,11 +100,12 @@ func _ready() -> void:
 	tween.tween_property($".", "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.0)
 	$map/part2/him_spawn_col/CollisionShape2D.set_deferred("disabled", 0)
 	init_game()
+	no_interact = 0
 	
 	
 	
 
-
+var no_interact = 1
 var elevator_area = 0
 var pc_area = 0
 var elevator_in = 0
@@ -122,7 +128,8 @@ func _process(delta: float) -> void:
 	
 	
 	if Input.is_action_just_pressed("interact"):
-		print("interacted")
+		#print("interacted")
+		if no_interact: return
 		
 		if elevator_area:
 			if !elevator_in:
@@ -133,7 +140,9 @@ func _process(delta: float) -> void:
 				$player.scale = Vector2(0.8, 0.8)
 				$player.position = Vector2(0, -66)
 				
-				$CanvasLayer/elevator/garage.visible = 1
+				$CanvasLayer/elevator/up.visible = 1
+				$CanvasLayer/elevator/down.visible = 1
+				
 			else:
 				elevator_in = 0
 				$player.hide = 0
@@ -141,7 +150,9 @@ func _process(delta: float) -> void:
 				$map/hallway/boundaries/StaticBody2D/elevator.set_deferred("disabled", 1)
 				$player.scale = Vector2(1, 1)
 				$player.position = Vector2(0, -52)
-				$CanvasLayer/elevator/garage.visible = 0
+				$CanvasLayer/elevator/up.visible = 0
+				$CanvasLayer/elevator/down.visible = 0
+				
 		
 		
 		if garage_elevator_area:
@@ -180,60 +191,30 @@ func _process(delta: float) -> void:
 				allow_move()
 		
 		if car_ride_area:
-			#print("trying to ride")
-			if 1:
-				pass
+			no_interact = 1
+			print("WIN")
+			$CanvasLayer.visible = 0
+			guide2("")
+			disable_move()
+			$player.visible = 0
+			play_sound(sound_car_engine)
+			$garage/garage/car/flash.visible = 1
+			$garage/garage/car/front_light.visible = 1
+			$garage/garage/car/back_light.visible = 1
 			
-			
-			if back_tires_exist + front_tires_exist != 4 && !car_battery_exist:
-				subtitles(str(4-(back_tires_exist + front_tires_exist))+ tr("tires and battery are missing"))
-				play_sound(sound_error)
-			else:
-				if back_tires_exist + front_tires_exist != 4:
-					subtitles(str(4-(back_tires_exist + front_tires_exist))+ tr("tires missing"))
-					play_sound(sound_error)
-				if !car_battery_exist:
-					print("car_battery_missing")
-					subtitles("Battery is missing")
-					play_sound(sound_error)
-			if back_tires_exist == 2 && front_tires_exist == 2 && car_battery_exist:
-				if !can_escape:
-					all_collected_except_keys = 1
-					print("keys missing")
-					subtitles("I forgot the keys", )
-					play_sound(sound_error)
-				elif can_escape && !car_keys_taken:
-					print('The keys are with him')
-					subtitles("The keys are with him", )
-					play_sound(sound_error)
-					
-					can_kill = 1
-					$map/collectables2/part1_crawbar.visible = 1
-				elif can_escape && car_keys_taken:
-					dead = 1
-					print("WIN")
-					$CanvasLayer.visible = 0
-					guide2("")
-					disable_move()
-					$player.visible = 0
-					play_sound(sound_car_engine)
-					$garage/garage/car/flash.visible = 1
-					$garage/garage/car/front_light.visible = 1
-					$garage/garage/car/back_light.visible = 1
-					
-					await get_tree().create_timer(1.0).timeout
-					var tween = create_tween()
-					tween.tween_property($".", "modulate", Color(0.0, 0.0, 0.0, 1.0), 1.0)
-					await get_tree().create_timer(2.0).timeout
-					play_sound(sound_car_move)
-					await get_tree().create_timer(1.0).timeout
-					play_sound(sound_wall_break)
-					await get_tree().create_timer(2.0).timeout
-					play_sound(sound_car_move)
-					var tween2 = create_tween()
-					tween2.tween_property($sfx/bg, "volume_db", -25, 3)
-					await get_tree().create_timer(3.0).timeout
-					get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+			await get_tree().create_timer(1.0).timeout
+			var tween = create_tween()
+			tween.tween_property($".", "modulate", Color(0.0, 0.0, 0.0, 1.0), 1.0)
+			await get_tree().create_timer(2.0).timeout
+			play_sound(sound_car_move)
+			await get_tree().create_timer(1.0).timeout
+			play_sound(sound_wall_break)
+			await get_tree().create_timer(2.0).timeout
+			play_sound(sound_car_move)
+			var tween2 = create_tween()
+			tween2.tween_property($sfx/bg, "volume_db", -25, 3)
+			await get_tree().create_timer(3.0).timeout
+			get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 		
 		if wardrobe_area:
 			if wardrobe_hide:
@@ -277,9 +258,36 @@ func _process(delta: float) -> void:
 				disable_move()
 				
 
+func elevator_taken(dir):
+	if anomaly == dir:
+		global.floor += 1
+		
+	no_interact = 1
+	$CanvasLayer/elevator/up.visible = 0
+	$CanvasLayer/elevator/down.visible = 0
+	guide("")
+	play_sound(sound_elevator)
+	
+	var tween = create_tween()
+	tween.set_parallel(1)
+	tween.tween_property($map/hallway/elevator/close1, "size:x", 100, 1.0)
+	tween.tween_property($map/hallway/elevator/close2, "size:x", 100, 1.0)
+	await get_tree().create_timer(1.0).timeout
+	
+	var tween2 = create_tween()
+	tween2.tween_property($".", "modulate", Color(0.0, 0.0, 0.0, 1.0), 1.0)
+	
+	await get_tree().create_timer(1.0).timeout
+	get_tree().change_scene_to_file("res://scenes/game.tscn")
+
+func _on_up_pressed() -> void:
+	elevator_taken(0)
+func _on_down_pressed() -> void:
+	elevator_taken(1)
 
 
-var can_kill = 0
+
+
 var sofa_hide = 0
 var wardrobe_area =0
 var wardrobe_hide = 0
@@ -387,61 +395,6 @@ func _on_garage_pressed() -> void:
 	
 		dead = 0
 		apartment_area = 0
-		
-func _on_apartment_pressed() -> void:
-	if !apartment_area:
-		dead = 0
-		print("button hide 3")
-		$CanvasLayer/elevator/apartment.visible = 0
-		guide("")
-		#print("goon")
-		play_sound(sound_elevator)
-		
-		print($garage/garage/elevator/close1.size.x)
-		global.try += 1
-		var tween = create_tween()
-		tween.set_parallel(1)
-		tween.tween_property($garage/garage/elevator/close1, "size:x", 100, 1.0)
-		tween.tween_property($garage/garage/elevator/close2, "size:x", 100, 1.0)
-		await get_tree().create_timer(1.0).timeout #edit
-		
-		var tween2 = create_tween()
-		tween2.tween_property($".", "modulate", Color(0.0, 0.0, 0.0, 1.0), 1.0)
-		
-		await get_tree().create_timer(1.0).timeout
-		
-		elevator_in = 0
-		$player.hide = 0
-		$map/hallway/elevator/close1.size.x = 0
-		$map/hallway/elevator/close2.size.x = 0
-		$garage/garage/elevator/close1.size.x = 0
-		$garage/garage/elevator/close2.size.x = 0
-		allow_move()
-		if all_collected_except_keys:
-			#$map/collectables2/part3_keys.visible = 1
-			back_tires_exist = 0
-			front_tires_exist = 1
-			car_battery_exist = 0
-			#all_collected_except_keys = 0
-			$map/part2/sofa/blood.visible = 1
-			#$garage/garage/car/front_tires/tire1.visible = 0
-			$garage/garage/car/front_tires/tire2.visible = 0
-			$garage/garage/car/back_tires/tire1.visible = 0
-			$garage/garage/car/back_tires/tire2.visible = 0
-			
-			
-		$garage/garage/boundaries/StaticBody2D/elevator.set_deferred("disabled", 1)
-		$map/hallway/boundaries/StaticBody2D/elevator.set_deferred("disabled", 1)
-		$player.scale = Vector2(1, 1)
-		$player.position = Vector2(0, -52)
-		print("button hide 4")
-		$CanvasLayer/elevator/apartment.visible = 0
-		var tween3 = create_tween()
-		tween3.tween_property($".", "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.0)
-		
-		apartment_area = 1
-		dead = 1
-
 
 func _on_pc_area_body_entered(body: Node2D) -> void:
 	if body == $player:
@@ -680,15 +633,17 @@ var anomalies_dif3 = [
 
 var dif1_prob = 10
 var dif2_prob = 20
-
+var anomaly = 0
 
 func anomaly_apply():
 	#get_node_or_null(anomalies[0]["hide"]).visible = 0
-	var temp = randi_range(0,1)
-	if temp:
+	var temp = randi_range(0,2)
+	if temp == 0:
 		print("anomaly skipped")
+		anomaly = 0
 		return
 	else:
+		anomaly = 1
 		temp = randi_range(1, 30)
 		
 		
@@ -739,9 +694,6 @@ func match_floor():
 			dif1_prob = 0
 			dif2_prob = 0
 		
-
-
-
 
 
 
