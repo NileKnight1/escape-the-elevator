@@ -4348,6 +4348,7 @@ position = Vector2(0, -17)
 zoom = Vector2(2, 2)
 
 [node name="him" parent="." unique_id=784523633 instance=ExtResource("11_ir15t")]
+visible = false
 position = Vector2(-241, 21)
 
 [node name="Area2D" type="Area2D" parent="him" unique_id=945519082]
