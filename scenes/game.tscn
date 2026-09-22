@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://dhfkcm6yuujuj" path="res://assets/26791-48x48x32.png" id="4_gee14"]
 [ext_resource type="Texture2D" uid="uid://crc0yeyorw5b0" path="res://assets/tall-houseplant-pot-nature-icon_18591-82627-removebg-preview.png" id="4_p57ef"]
 [ext_resource type="Texture2D" uid="uid://csy2brkuasknu" path="res://assets/sticky_note-removebg-preview.png" id="5_0tnpc"]
+[ext_resource type="PackedScene" uid="uid://br1rj58wbo5fn" path="res://scenes/him.tscn" id="11_ir15t"]
 [ext_resource type="FontFile" uid="uid://5se7axt3meof" path="res://assets/HoldMoney-Regular.ttf" id="17_rysoc"]
 [ext_resource type="Texture2D" uid="uid://c0embyygxbuxk" path="res://assets/Flag_of_the_United_Kingdom_(3-5).svg.webp" id="19_37s47"]
 [ext_resource type="Texture2D" uid="uid://ceedyb7u16bo6" path="res://assets/Flag_of_the_Arab_League.svg" id="20_bt5mj"]
@@ -696,6 +697,22 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.92672414, 0.89224136)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
+size = Vector2(51.14911, 141.04755)
+
+[sub_resource type="Gradient" id="Gradient_ir15t"]
+offsets = PackedFloat32Array(0, 0.7089552, 0.9104478, 1)
+colors = PackedColorArray(1, 1, 1, 0, 0.62352943, 0.45490196, 0.45490196, 0, 0.5013575, 0.2799397, 0.2799397, 0.15535441, 0.30588236, 0, 0, 0.40392157)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_8jhjc"]
+gradient = SubResource("Gradient_ir15t")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bekt7"]
+texture = SubResource("GradientTexture2D_8jhjc")
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_753oq"]
 bg_color = Color(0.20703125, 0.05256653, 0.05256653, 1)
 border_width_left = 1
@@ -834,7 +851,7 @@ metadata/_edit_lock_ = true
 offset_left = -3105.0
 offset_top = 43.0
 offset_right = 2877.0
-offset_bottom = 225.0
+offset_bottom = 289.0
 layout_direction = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_gee14")
@@ -4330,10 +4347,25 @@ texture = SubResource("GradientTexture2D_lbhrr")
 position = Vector2(0, -17)
 zoom = Vector2(2, 2)
 
+[node name="him" parent="." unique_id=784523633 instance=ExtResource("11_ir15t")]
+position = Vector2(-241, 21)
+
+[node name="Area2D" type="Area2D" parent="him" unique_id=945519082]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="him/Area2D" unique_id=1604897734]
+position = Vector2(19.374664, -48.824158)
+shape = SubResource("RectangleShape2D_vlew8")
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1460517878]
 
 [node name="mobile" parent="CanvasLayer" unique_id=2043303018 instance=ExtResource("2_lnu2h")]
 visible = false
+
+[node name="red" type="Panel" parent="CanvasLayer" unique_id=960971587]
+visible = false
+offset_right = 1280.0
+offset_bottom = 720.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_bekt7")
 
 [node name="elevator" type="Node2D" parent="CanvasLayer" unique_id=1326820988]
 
@@ -4593,6 +4625,58 @@ offset_right = 606.0
 offset_bottom = 301.0
 layout_direction = 2
 
+[node name="restart" type="Node2D" parent="CanvasLayer" unique_id=634129003]
+visible = false
+
+[node name="buttons" type="Node2D" parent="CanvasLayer/restart" unique_id=821465787]
+light_mask = 0
+position = Vector2(510, 0)
+
+[node name="bg2" type="Panel" parent="CanvasLayer/restart/buttons" unique_id=847558910]
+light_mask = 0
+offset_left = 22.0
+offset_top = 178.0
+offset_right = 231.0
+offset_bottom = 384.0
+layout_direction = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_s0g06")
+
+[node name="buttons" type="VBoxContainer" parent="CanvasLayer/restart/buttons" unique_id=2034497048]
+light_mask = 0
+offset_left = 54.0
+offset_top = 198.0
+offset_right = 203.0
+offset_bottom = 342.0
+layout_direction = 2
+alignment = 1
+
+[node name="restart" type="Button" parent="CanvasLayer/restart/buttons/buttons" unique_id=1644272125]
+light_mask = 0
+layout_mode = 2
+layout_direction = 2
+theme_override_colors/font_hover_color = Color(0.54296875, 0.30926418, 0.1951294, 1)
+theme_override_fonts/font = ExtResource("17_rysoc")
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_2gnni")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vgxg3")
+theme_override_styles/hover = SubResource("StyleBoxFlat_4nbsr")
+theme_override_styles/disabled = SubResource("StyleBoxLine_fkywm")
+text = "Restart"
+
+[node name="main_menu" type="Button" parent="CanvasLayer/restart/buttons/buttons" unique_id=190356170]
+light_mask = 0
+layout_mode = 2
+layout_direction = 2
+theme_override_colors/font_hover_color = Color(0.54296875, 0.30926418, 0.1951294, 1)
+theme_override_fonts/font = ExtResource("17_rysoc")
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_2gnni")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vgxg3")
+theme_override_styles/hover = SubResource("StyleBoxFlat_4nbsr")
+theme_override_styles/disabled = SubResource("StyleBoxLine_fkywm")
+text = "Main Menu"
+
 [node name="pause_button" type="Button" parent="CanvasLayer" unique_id=1965858828]
 offset_left = 61.0
 offset_top = 102.0
@@ -4661,6 +4745,7 @@ autoplay = true
 [connection signal="body_exited" from="garage/garage/car/car_battery_area" to="." method="_on_car_battery_area_body_exited"]
 [connection signal="body_entered" from="garage/garage/elevator_area" to="." method="_on_garage_elevator_area_body_entered"]
 [connection signal="body_exited" from="garage/garage/elevator_area" to="." method="_on_garage_elevator_area_body_exited"]
+[connection signal="body_entered" from="him/Area2D" to="." method="_on_kill_entered"]
 [connection signal="pressed" from="CanvasLayer/elevator/garage" to="." method="_on_garage_pressed"]
 [connection signal="pressed" from="CanvasLayer/elevator/up" to="." method="_on_up_pressed"]
 [connection signal="pressed" from="CanvasLayer/elevator/down" to="." method="_on_down_pressed"]
@@ -4672,4 +4757,6 @@ autoplay = true
 [connection signal="pressed" from="CanvasLayer/pause/settings/ar2" to="." method="_on_ar_pressed"]
 [connection signal="pressed" from="CanvasLayer/pause/settings/eg2" to="." method="_on_eg_pressed"]
 [connection signal="toggled" from="CanvasLayer/pause/settings/touch_check" to="." method="_on_touch_check_toggled"]
+[connection signal="pressed" from="CanvasLayer/restart/buttons/buttons/restart" to="." method="_on_restart_pressed"]
+[connection signal="pressed" from="CanvasLayer/restart/buttons/buttons/main_menu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="CanvasLayer/pause_button" to="." method="_on_pause_button_pressed"]

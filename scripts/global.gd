@@ -1,8 +1,8 @@
 extends Node
 
-var floor = 0
+var floor = 9
 var touch = 0
-var mistakes = 0
+var mistakes = 3
 
 
 

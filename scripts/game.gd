@@ -19,6 +19,7 @@ var sound_sofa = preload("res://audio/tanweraman-wave-cape-cloth-in-wind-350430_
 var sound_car_engine = preload("res://audio/dragon-studio-car-engine-roaring-376881.mp3")
 var sound_wall_break = preload("res://audio/freesound_community-rock-destroy-6409.mp3")
 var sound_car_move = preload("res://audio/spinopel-car-driving-away-345709.mp3")
+var sound_iseeyou = preload("res://audio/dragon-studio-i-see-you-creepy-ghost-whisper-401711.mp3")
 
 
 # mob taken
@@ -648,9 +649,33 @@ func game_lose():
 	tween.set_parallel(1)
 	tween.tween_property($map/hallway/elevator/close1, "size:x", 100, 1.0)
 	tween.tween_property($map/hallway/elevator/close2, "size:x", 100, 1.0)
-	await get_tree().create_timer(1.0).timeout
+
+	await get_tree().create_timer(3.0).timeout
+	play_sound(sound_iseeyou)
+	await get_tree().create_timer(5.0).timeout
+	$him.apartment_area = 1
+	$him.player = $player
+	$him.visible = 1
+	$him.move = 1
+	$him.awake = 1
 
 
+func _on_kill_entered(body: Node2D) -> void:
+	if body == $player && $him.move:
+		print("kill")
+		global.floor = 0
+		global.mistakes = 0
+		$CanvasLayer/red.visible = 1
+		disable_move()
+		$player.rotation = 90
+		$him.move = 0
+		$CanvasLayer/pause_button.visible = 0
+		$CanvasLayer/restart.visible = 1
+		
+
+
+func _on_restart_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 
 
